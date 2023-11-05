@@ -1,0 +1,61 @@
+#code for creating a Python-Based Simulated environment
+import random
+
+class RFIDTag:
+    def _init_(self, tag_id):
+        self.tag_id = tag_id
+        self.data = None
+
+    def read(self):
+        if self.data is not None:
+            return f"Tag ID: {self.tag_id}, Data: {self.data}"
+        else:
+            return f"Tag ID: {self.tag_id}, No data available"
+
+    def write(self, data):
+        self.data = data
+
+class RFIDReader:
+    def _init_(self):
+        self.detected_tags = []
+
+    def detect_tag(self, tag):
+        if tag not in self.detected_tags:
+            self.detected_tags.append(tag)
+
+    def read_detected_tags(self):
+        return [tag.read() for tag in self.detected_tags]
+
+def simulate_rfid():
+    num_interactions = int(input("Enter the number of RFID interactions: "))
+    tags = [RFIDTag(tag_id) for tag_id in range(1, 6)]
+    reader = RFIDReader()
+
+    for _ in range(num_interactions):
+        print("\nAvailable Tags:")
+        for tag in tags:
+            print(f"Tag ID: {tag.tag_id}")
+
+        tag_id = int(input("Enter the Tag ID to interact with: "))
+        random_tag = next((tag for tag in tags if tag.tag_id == tag_id), None)
+
+        if random_tag:
+            random_action = input("Choose action (read/write): ").strip().lower()
+
+            if random_action == "read":
+                print(f"Reader reads: {random_tag.read()}")
+            elif random_action == "write":
+                custom_data = input("Enter custom data to write to the tag: ")
+                random_tag.write(custom_data)
+                print(f"Reader writes data: {custom_data} to Tag {random_tag.tag_id}")
+            else:
+                print("Invalid action. Choose 'read' or 'write'.")
+        else:
+            print(f"Tag ID {tag_id} not found.")
+
+    print("\nDetected Tags:")
+    for tag_info in reader.read_detected_tags():
+        print(tag_info)
+
+if _name_ == "_main_":
+    simulate_rfid()
